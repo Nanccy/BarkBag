@@ -71,7 +71,7 @@ class addItems extends Component {
             <View>
             <TouchableOpacity style={styles.up}
                     onPress={() => this.props.navigation.navigate('Upload')}>
-                    <Text style={styles.text}>Add Item จ้า</Text>
+                    <Text style={styles.text}>Input item</Text>
                 </TouchableOpacity>
            
            </View>
