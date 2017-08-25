@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     lineHeight: 17,
-    fontFamily: 'Raleway-Regular'
+    // fontFamily: 'Raleway-Regular'
   },
   btnTxtActive: {
     color: '#f94057'

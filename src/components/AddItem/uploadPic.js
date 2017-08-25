@@ -12,13 +12,47 @@ import {
     AppRegistry,
     AsyncStorage
 
-} from 'react-native';
-import axios from 'axios'
+} from 'react-native'
+import ImagePicker from 'react-native-image-picker'
 
 class uploadPic extends Component {
-    async componentWillMount() {
-        const data = await axios.get('http://188.166.239.144:8000/api/599fca839347ae26554fedaf')
-        console.log(data)
+
+    constructor(props) {
+        super(props)
+        this._pickImage.bind(this)
+    }
+
+    state = {
+        image: ''
+    }
+
+    _pickImage = async () => {
+        const options = {
+            title: 'Select Avatar',
+            customButtons: [
+                { name: 'fb', title: 'Choose Photo from Facebook' },
+            ],
+            storageOptions: {
+                skipBackup: true,
+                path: 'images'
+            }
+        };
+        ImagePicker.showImagePicker(options, response => {
+            
+            if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            }
+            else {
+                let source = { uri: response.uri };
+
+                // You can also display the image using data:
+                // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                this.setState({
+                    image: source
+                });
+            }
+        })
     }
 
     render() {
@@ -26,14 +60,16 @@ class uploadPic extends Component {
             <Image source={require("../../images/bg1.png")} style={styles.container}>
                 <View style={styles.SquareBackground}>
                     <View>
-                        <Image source={require("../../images/picture.png")} style={{ height: 100, width: 100 }} />
+                        <TouchableOpacity onPress={this._pickImage} >
+                            <Image source={this.state.image === '' ? require("../../images/picture.png") : this.state.image } style={{ height: 100, width: 100 }} />
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.inputContainer}>
                         <TextInput style={styles.input}
                             placeholder='Item name'>
                         </TextInput>
 
-                        <TextInput  style={styles.inputDes}
+                        <TextInput style={styles.inputDes}
                             placeholder='Description'>
                         </TextInput>
 
@@ -74,7 +110,7 @@ const styles = StyleSheet.create({
     viewStyle2: {
         justifyContent: 'space-between',
         alignItems: 'center',
-        
+
     },
     viewItem: {
         justifyContent: 'space-between',
@@ -84,7 +120,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: 'yellow'
     },
-    
+
     backgroundImages: {
         flex: 1,
         alignSelf: 'stretch',
@@ -97,7 +133,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         padding: 30,
         alignSelf: 'stretch',
-        
+
 
     },
     input: {
@@ -109,9 +145,9 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#fff',
         backgroundColor: 'rgba(255,255,255,0)',
-    
+
     },
-     inputDes: {
+    inputDes: {
         color: 'white',
         fontSize: 16,
         height: 80,
@@ -120,7 +156,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#fff',
         backgroundColor: 'rgba(255,255,255,0)',
-    
+
     },
     buttonContainer: {
         backgroundColor: "#0D9092",
@@ -132,6 +168,6 @@ const styles = StyleSheet.create({
         color: "#FFFF",
         fontSize: 15
     },
-    
+
 });
 export default uploadPic;
