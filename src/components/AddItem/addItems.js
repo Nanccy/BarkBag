@@ -20,13 +20,11 @@ import Item from '../item'
 
 class addItems extends Component {
     state = {
-        data: [],
+        data: '',
         components: []
     }
-    async componentWillMount() {
-        const result = await axios.get('http://188.166.239.144:8000')
-        const data = await result.data
-        this.setState('data', data)
+    async componentDidMount() {
+        await this.fetchData()
     }
 
     createRow(item) {
@@ -40,11 +38,31 @@ class addItems extends Component {
         );
     }
 
-    fetchData() {
-        
+    async fetchData() {
+        const result = await axios.get('http://localhost:8000/items')
+        const data = await result.data
+        this.setState({
+            data
+        })
+    }
+
+    initComponent() {
+        let tmpComponent = []
+        this.state.data.map((d, index) => {
+            if(tmpComponent.length < 2) {
+                tmpComponent.push(<Item data={d} />)
+            }
+
+            if(tmpComponent.length === 2 || this.state.data.length -1 === index) {
+                this.state.components.push(withLayout(styles.viewStyle2, d._id)(tmpComponent[0], tmpComponent[1]))
+                tmpComponent = []
+            }
+        })
     }
 
     render() {
+        if (this.state.data !== '' )
+            this.initComponent()
         return (
             <Image source={require("../../images/bg1.png")} style={styles.container}>
                 <HomeHeader
@@ -55,11 +73,12 @@ class addItems extends Component {
                     <View style={styles.viewStyle2}>
                         <Text style={styles.fontTopic}>Items Today</Text>
                     </View>
-                    {withLayout(styles.viewStyle2)(Item, Item)}
-                    {withLayout(styles.viewStyle2)(Item, Item)}
+                    <View>
+                    { this.state.components }
+                    </View>
                     <View>
                         <TouchableOpacity style={styles.up}
-                            onPress={() => this.props.navigation.navigate('Upload')}>
+                            onPress={() => this.props.navigation.navigate('Upload', { refresh: this.fetchData() })}>
                             <Text style={styles.text}>Input item</Text>
                         </TouchableOpacity>
                     </View>

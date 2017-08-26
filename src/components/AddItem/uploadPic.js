@@ -13,6 +13,8 @@ import {
     AsyncStorage
 
 } from 'react-native'
+import axios from 'axios'
+import LinkedStateMixin from 'react-addons-linked-state-mixin'
 import ImagePicker from 'react-native-image-picker'
 
 class uploadPic extends Component {
@@ -23,6 +25,8 @@ class uploadPic extends Component {
     }
 
     state = {
+        item: 'item n',
+        description: 'item 2',
         image: ''
     }
 
@@ -55,6 +59,16 @@ class uploadPic extends Component {
         })
     }
 
+    upload = async () => {
+        axios.post('http://localhost:8000/items', {
+            item: this.state.item,
+            description: this.state.description,
+            image_url: this.state.image
+        })
+        await this.props.navigation.state.params.refresh
+        await this.props.navigation.navigate('AddItem')
+    }
+
     render() {
         return (
             <Image source={require("../../images/bg1.png")} style={styles.container}>
@@ -73,7 +87,7 @@ class uploadPic extends Component {
                             placeholder='Description'>
                         </TextInput>
 
-                        <TouchableOpacity style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={this.upload.bind(this)} >
                             <Text style={styles.buttonText}>
                                 Add Item
                         </Text>
